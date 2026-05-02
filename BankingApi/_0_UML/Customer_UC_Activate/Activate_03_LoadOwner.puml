@@ -1,0 +1,24 @@
+@startuml
+scale 1.35
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+skinparam maxMessageSize 90
+title Detail 2: Load Owner + Status Guard
+
+participant "CustomerUcActivate" as U
+participant "EmployeesRepository" as R
+participant "Customer Aggregate" as CA
+
+U -> R : FindById(customerId)
+alt not found
+  R --> U : null (404)
+else found
+  R --> U : Customer
+  U -> CA : EnsureStatus(Provisioned)
+  alt wrong status
+    CA --> U : Failure (409)
+  else ok
+    CA --> U : OK
+  end
+end
+@enduml
