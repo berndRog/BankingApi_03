@@ -1,5 +1,6 @@
 using Asp.Versioning.ApiExplorer;
 using BankingApi._2_Core.Customers;
+using BankingApi._2_Core.Employees;
 using BankingApi._2_Core.Payments;
 using BankingApi._3_Infrastructure;
 using BankingApi.Configure;
@@ -24,6 +25,7 @@ public class Program {
       // Modules
       builder.Services.AddBuildingBlocksModule();
       builder.Services.AddCustomersModule();
+      builder.Services.AddEmployeesModule();
       builder.Services.AddPaymentsModule();
       builder.Services.AddInfrastructureModule(builder.Configuration);
 

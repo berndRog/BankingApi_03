@@ -4,7 +4,7 @@ namespace BankingApi._2_Core.Employees._1_Ports.Outbound;
 // Database context abstraction used by the Employees module.
 // Provides minimal persistence access required by repositories.
 // The concrete implementation typically wraps an EF Core DbContext.
-public interface IEmployeesDbContext {
+public interface IEmployeeDbContext {
 
    // Query access to Employee aggregates
    IQueryable<Employee> Employees { get; }

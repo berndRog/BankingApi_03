@@ -2,37 +2,44 @@ using BankingApi._2_Core.BuildingBlocks;
 using BankingApi._2_Core.BuildingBlocks._3_Domain.Entities;
 using BankingApi._2_Core.BuildingBlocks._3_Domain.Enums;
 using BankingApi._2_Core.BuildingBlocks._3_Domain.ValueObjects;
+using BankingApi._2_Core.Employees._3_Domain.Enum;
 using BankingApi._2_Core.Employees._3_Domain.Errors;
 namespace BankingApi._2_Core.Employees._3_Domain.Entities;
 
 // Employee aggregate root.
 public sealed class Employee : AggregateRoot {
    
-   // properties
+   //--- properties ------------------------------------------------------------
+   // inherited from Entity + Aggregate root base class
+   // public Guid Id { get; private set; } 
+   // public DateTimeOffset CreatedAt { get; private set; }
+   // public DateTimeOffset UpdatedAt { get; private set; }
    public string Firstname { get; private set; } = string.Empty;
    public string Lastname  { get; private set; } = string.Empty;
    public EmailVo EmailVo { get; private set; } = default!;
    public PhoneVo PhoneVo { get; private set; } = default!;
   
    public string  Subject { get; private set; } = default!; // IdentityAccessServer
-   
+   public EmployeeStatus Status { get; private set; } = EmployeeStatus.Pending;
    public string PersonnelNumber { get; private set; } = string.Empty;
    public AdminRights AdminRights { get; private set; } = AdminRights.ViewReports;
-   public bool IsAdmin => AdminRights != AdminRights.None;
-   public bool IsActive { get; private set; }
-   public DateTimeOffset? DeactivatedAt { get; private set; }
 
+ 
    private const AdminRights AllowedRights =
       AdminRights.ViewReports |
       AdminRights.ViewCustomers | AdminRights.ManageCustomers |
       AdminRights.ViewAccounts | AdminRights.ManageAccounts |
       AdminRights.ViewTransfers | AdminRights.ManageTransfers |
-      AdminRights.ViewEmployees | AdminRights.ManageEmployees; 
+      AdminRights.ViewEmployees | AdminRights.ManageEmployees;
+
+   public bool IsActive =>
+      Status == EmployeeStatus.Active;
    
-   // EF Core constructor
+   //--- constructors ----------------------------------------------------------
+   // EF Core ctor
    private Employee() { }
 
-   // Domain constructor
+   // Domain ctor
    private Employee(
       Guid id,
       string firstname,
@@ -40,9 +47,8 @@ public sealed class Employee : AggregateRoot {
       EmailVo emailVo,
       PhoneVo phoneVo,
       string subject,
-      string personnelNumber,
-      AdminRights adminRights,
-      bool isActive
+      string personnelNumber, 
+      AdminRights adminRights
    ) {
       Id = id;
       Firstname = firstname;
@@ -52,10 +58,9 @@ public sealed class Employee : AggregateRoot {
       Subject = subject;
       PersonnelNumber = personnelNumber;
       AdminRights = adminRights;
-      IsActive = isActive;
    }
 
-   // ---------- Factory (Result-based) ----------
+   // --- static factory to create a Customer object ---------------------------
    public static Result<Employee> Create(
       string firstname,
       string lastname,
@@ -115,8 +120,7 @@ public sealed class Employee : AggregateRoot {
          phoneVo: phoneVo,
          subject: subject,
          personnelNumber: personnelNumber,
-         adminRights: adminRights,
-         isActive: true
+         adminRights: adminRights
       );
       
       // Creation timestamp is set to createdAt
@@ -124,94 +128,20 @@ public sealed class Employee : AggregateRoot {
       
       return Result<Employee>.Success(employee);
    }
-
-   // ---------- Domain operations ----------
-   // Create an employee on first login (provisioning).
-   // - Only identity facts are known for sure (subject, email, createdAt).
-   // - Business profile data is still missing and must be completed by the employee.
-   public static Result<Employee> CreateProvision(
-      string subject,
-      EmailVo emailVo,
-      DateTimeOffset createdAt,
-      AdminRights adminRights = AdminRights.ViewReports,
-      string? id = null
+   
+   //--- Domain methods -----------------------------------------------------------
+   // Activates the employee.
+   public Result Activate(
+      DateTimeOffset activatedAt
    ) {
+      if (!IsActive)
+         return Result.Failure(EmployeeErrors.AlreadyDeactivated);
       
-      var phoneVo = PhoneVo.Create("1111 2222 3333").Value;
+      Status = EmployeeStatus.Active;
       
-      var resultSubject = IdentitySubject.Check(subject);
-      if (resultSubject.IsFailure)
-         return Result<Employee>.Failure(resultSubject.Error);
-      
-      var resultId = Resolve(id, EmployeeErrors.InvalidId);
-      if (resultId.IsFailure)
-         return Result<Employee>.Failure(resultId.Error);
-
-      // Provisioned owner starts with empty profile fields
-      var employee = new Employee(
-         id: resultId.Value,
-         firstname: "unknown",
-         lastname: "unknown",
-         emailVo: emailVo,
-         phoneVo: phoneVo,
-         subject: resultSubject.Value,
-         personnelNumber: "unknown", 
-         adminRights: adminRights,
-         isActive: false
-      );
-      
-      // Provisioning should reflect identity creation time (not "now")
-      employee.Initialize(createdAt);
-
-      return Result<Employee>.Success(employee);
-   }
-
-   // --------------------------------------------------------------------------
-   // Domain methods (mutations)
-   // - Important: we accept 'now' from outside to keep tests deterministic and
-   //   to avoid reliance on the internal clock after EF materialization.
-   // --------------------------------------------------------------------------
-   // Employee completes or updates their profile after provisioning.
-   public Result UpdateProfile(
-      string firstname,
-      string lastname,
-      EmailVo emailVo,
-      PhoneVo phoneVo,
-      string personnelNumber,
-      DateTimeOffset updatedAt
-   ) {
-
-      firstname = firstname.Trim();
-      lastname  = lastname.Trim();
-      personnelNumber = personnelNumber.Trim();
-
-      // Validate required profile fields
-      if (string.IsNullOrWhiteSpace(firstname))
-         return Result.Failure(EmployeeErrors.FirstnameIsRequired);
-            
-      if (firstname.Length is < 2 or > 80)
-         return Result.Failure(EmployeeErrors.InvalidFirstname);
-
-      if (string.IsNullOrWhiteSpace(lastname))
-         return Result.Failure(EmployeeErrors.LastnameIsRequired);
-      if (lastname.Length is < 2 or > 80)
-         return Result.Failure(EmployeeErrors.InvalidLastname);
-      
-      if (string.IsNullOrWhiteSpace(personnelNumber))
-         return Result.Failure(EmployeeErrors.PersonnelNumberIsRequired);
-
-      // Apply changes
-      Firstname = firstname;
-      Lastname  = lastname;
-      EmailVo = emailVo;
-      PhoneVo = phoneVo;
-      PersonnelNumber = personnelNumber;
-      IsActive = true;
-      
-      Touch(updatedAt);
+      Touch(activatedAt);
       return Result.Success();
    }
-
    
    // Replaces the administrative rights of the employee.
    public Result SetAdminRights(
@@ -227,15 +157,36 @@ public sealed class Employee : AggregateRoot {
       return Result.Success();
    }
 
+   // update employee profile data
+   public Result UpdateProfile(
+      string? lastname,
+      EmailVo? emailVo,
+      PhoneVo? phoneVo,
+      DateTimeOffset updatedAt
+   ) {
+      lastname  = lastname.Trim();
+      
+      if (!string.IsNullOrWhiteSpace(lastname) && lastname.Length is < 2 or > 80)
+         return Result.Failure(EmployeeErrors.InvalidLastname);
+
+
+      // Apply changes
+      if (lastname is not null) Lastname = lastname;
+      if (emailVo is not null) EmailVo = emailVo;
+      if (phoneVo is not null) PhoneVo = phoneVo;
+      
+      Touch(updatedAt);
+      return Result.Success();
+   }
+   
    // Deactivates the employee.
    public Result Deactivate(
       DateTimeOffset deactivatedAt
    ) {
       if (!IsActive)
          return Result.Failure(EmployeeErrors.AlreadyDeactivated);
-
-      IsActive = false;
-      DeactivatedAt = deactivatedAt;
+      
+      Status = EmployeeStatus.Deactivated;
       
       Touch(deactivatedAt);
       return Result.Success();

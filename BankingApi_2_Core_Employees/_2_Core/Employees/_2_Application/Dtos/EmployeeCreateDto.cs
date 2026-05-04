@@ -8,6 +8,5 @@ public sealed record EmployeeCreateDto(
    string Phone,
    string Subject,
    string PersonnelNumber,
-   bool IsActive,
    int AdminRightsInt
 );

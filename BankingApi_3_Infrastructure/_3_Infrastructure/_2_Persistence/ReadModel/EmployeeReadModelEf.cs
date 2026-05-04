@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 [assembly: InternalsVisibleTo("BankingApiTest")]
 namespace BankingApi._3_Infrastructure._2_Persistence.ReadModel;
 internal sealed class EmployeeReadModelEf(
-   IEmployeesDbContext employeesDbContext,
+   IEmployeeDbContext employeesDbContext,
    IIdentityGateway identityGateway
 ) : IEmployeeReadModel {
 

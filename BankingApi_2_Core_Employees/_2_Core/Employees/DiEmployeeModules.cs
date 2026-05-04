@@ -5,7 +5,7 @@ namespace BankingApi._2_Core.Employees;
 
 public static class DiAddEmployeeModules {
 
-   public static IServiceCollection AddEmployeeModule(
+   public static IServiceCollection AddEmployeesModule(
       this IServiceCollection services
    ) {
       // Inbound ports Use Cases

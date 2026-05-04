@@ -20,7 +20,6 @@ namespace BankingApi._2_Core.Employees._2_Application.UseCases;
 /// 4) Add to repository + commit via UnitOfWork
 ///
 /// Logging:
-/// - Uses LogIfFailure for all business failures (Result-based)
 /// - Does not handle technical exceptions (middleware responsibility)
 /// </summary>
 public sealed class EmployeeUcCreate(
@@ -34,16 +33,16 @@ public sealed class EmployeeUcCreate(
       EmployeeCreateDto employeeCreateDto,
       CancellationToken ct = default
    ) {
-      // 1) subject required
+      if (string.IsNullOrWhiteSpace(employeeCreateDto.PersonnelNumber))
+         return Result<EmployeeDto>.Failure(EmployeeErrors.PersonnelNumberIsRequired);
+      
+      // 1) Subject required
       var resultSubject = IdentitySubject.Check(employeeCreateDto.Subject);
       if (resultSubject.IsFailure) 
          return Result<EmployeeDto>.Failure(resultSubject.Error);
       var subject = resultSubject.Value;
 
-      // ---- Use-case guards (cheap validations) ----
-      if (string.IsNullOrWhiteSpace(employeeCreateDto.PersonnelNumber))
-         return Result<EmployeeDto>.Failure(EmployeeErrors.PersonnelNumberIsRequired);
-      
+      // 2) Value objects
       var resultEmail = EmailVo.Create(employeeCreateDto.Email);
       if (resultEmail.IsFailure)
          return Result<EmployeeDto>.Failure(resultEmail.Error);
@@ -54,14 +53,14 @@ public sealed class EmployeeUcCreate(
          return Result<EmployeeDto>.Failure(resultPhone.Error);
       var phoneVo = resultPhone.Value;
       
-      // ---- Uniqueness checks (I/O) ----
+      // 3) Check uniqueness
       if (await repository.FindByEmailAsync(emailVo, ct) != null)
          return Result<EmployeeDto>.Failure(EmployeeErrors.EmailMustBeUnique);
 
       if (await repository.FindByPersonnelNumberAsync(employeeCreateDto.PersonnelNumber, ct) != null)
          return Result<EmployeeDto>.Failure(EmployeeErrors.PersonnelNumberMustBeUnique);
 
-      // ---- Domain factory (invariants) ----
+      // 4) Domain model
       var result = Employee.Create(
          firstname: employeeCreateDto.Firstname,
          lastname: employeeCreateDto.Lastname,
@@ -76,16 +75,18 @@ public sealed class EmployeeUcCreate(
       if (result.IsFailure)
          return Result<EmployeeDto>.Failure(result.Error);
       var employee = result.Value!;
+    
+      // 5) Activate employee
+      employee.Activate(clock.UtcNow);
       
-      // Add to repository
+      // 6) Add to repository
       repository.Add(employee);
 
-      // Persist via UnitOfWork
+      // 7) Save all changes to database
       var rows = await unitOfWork.SaveAllChangesAsync("Employee created", ct);
 
       logger.LogInformation(
-         "EmployeeUcCreate done Id={id} personnelNumber={nr} savedRows={rows}",
-         employee.Id, employee.PersonnelNumber, rows);
+         "EmployeeUcCreate Id={id}  savedRows={rows}", employee.Id,  rows);
 
       return Result<EmployeeDto>.Success(employee.ToEmployeeDto());
    }

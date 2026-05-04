@@ -13,7 +13,6 @@ public static class EmployeeMappings {
       Phone: employee.PhoneVo.Value,
       Subject: employee.Subject,
       PersonnelNumber: employee.PersonnelNumber,
-      IsActive: employee.IsActive,
       AdminRightsInt: (int) employee.AdminRights
    );
    
@@ -24,7 +23,7 @@ public static class EmployeeMappings {
       Email: employee.EmailVo.Value,
       Phone: employee.PhoneVo.Value,
       PersonnelNumber: employee.PersonnelNumber,
-      IsActive: employee.IsActive,
+      StatusInt: (int) employee.Status,
       AdminRightsInt: (int) employee.AdminRights
    );
    

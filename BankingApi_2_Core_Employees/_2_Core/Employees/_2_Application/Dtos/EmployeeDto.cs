@@ -7,6 +7,6 @@ public sealed record EmployeeDto(
    string Email,
    string Phone,
    string PersonnelNumber,
-   bool IsActive,
+   int StatusInt,
    int AdminRightsInt
 );

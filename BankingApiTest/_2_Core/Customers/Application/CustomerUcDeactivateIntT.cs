@@ -106,12 +106,14 @@ public sealed class CustomerUcDeactivateIntT : TestBaseIntegration {
       
       // // Assert
       var actualCustomer = await customerRepository.FindByIdAsync(customer.Id, ct);
+      NotNull(actualCustomer);
       False(actualCustomer.IsActive);
       
       var actualAccounts = await accountRepository
          .SelelctAccountsByCustomerIdWithBeneficiariesAsync(actualCustomer.Id, ct);
       NotNull(actualAccounts);
       True(actualAccounts.Count == 2);
-      False(actualAccounts.Any(a => a.IsActive)); // all accounts should be deactivated
+      var anyActive = actualAccounts.Any(a => a.IsActive); // all accounts should be deactivated
+      False(anyActive);
    }
 }

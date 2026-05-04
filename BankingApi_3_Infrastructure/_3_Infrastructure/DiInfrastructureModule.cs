@@ -1,6 +1,7 @@
 using BankingApi._2_Core.BuildingBlocks._1_Ports.Outbound;
 using BankingApi._2_Core.BuildingBlocks._4_BcContracts._1_Ports;
 using BankingApi._2_Core.Customers._1_Ports.Outbound;
+using BankingApi._2_Core.Employees._1_Ports.Outbound;
 using BankingApi._2_Core.Payments._1_Ports.Outbound;
 using BankingApi._3_Infrastructure._2_Persistence.Adapters;
 using BankingApi._3_Infrastructure._2_Persistence.Database;
@@ -30,18 +31,23 @@ public static class DiInfrastructureModule {
       // BC Db Contexts
       services.AddScoped<ICustomerDbContext, CustomerDbContextEf>(); 
       services.AddScoped<IAccountDbContext, AccountDbContextEf>(); 
-      
+      services.AddScoped<IEmployeeDbContext, EmployeeDbContextEf>(); 
+
       // Adapters
       services.AddScoped<ICustomerContract, CustomerContractEf>();
       services.AddScoped<IAccountContract, AccountContractEf>();
       
+      
+      
       // Repositories
       services.AddScoped<ICustomerRepository, CustomerRepositoryEf>();
       services.AddScoped<IAccountRepository, AccountRepositoryEf>();
-      
+      services.AddScoped<IEmployeeRepository, EmployeeRepositoryEf>();
+
       // ReadModels
       services.AddScoped<ICustomerReadModel, CustomerReadModelEf>();  
       services.AddScoped<IAccountReadModel, AccountReadModelEf>();  
+      services.AddScoped<IEmployeeReadModel, EmployeeReadModelEf>();  
       
       // Unit of Work
       services.AddScoped<IUnitOfWork, UnitOfWork>();
