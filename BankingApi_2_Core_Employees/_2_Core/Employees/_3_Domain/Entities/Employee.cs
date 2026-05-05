@@ -164,12 +164,11 @@ public sealed class Employee : AggregateRoot {
       PhoneVo? phoneVo,
       DateTimeOffset updatedAt
    ) {
-      lastname  = lastname.Trim();
+      lastname  = lastname?.Trim();
       
       if (!string.IsNullOrWhiteSpace(lastname) && lastname.Length is < 2 or > 80)
          return Result.Failure(EmployeeErrors.InvalidLastname);
-
-
+      
       // Apply changes
       if (lastname is not null) Lastname = lastname;
       if (emailVo is not null) EmailVo = emailVo;

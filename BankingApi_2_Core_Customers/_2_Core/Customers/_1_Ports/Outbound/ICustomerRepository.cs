@@ -46,6 +46,7 @@ public interface ICustomerRepository {
    // Add a new customer aggregate to the repository
    void Add(Customer customer);
    void AddRange(IEnumerable<Customer> customers);
+   
 }
 
 /*

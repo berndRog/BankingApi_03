@@ -29,7 +29,7 @@ internal sealed class AccountUcDeactivate(
       
       // 1) Load authorized employee and check if has rights to manage accounts
       var resultEmployee = await employeeContract.GetAuthorizedEmployeeAsync(
-         AdminRights.ManageAccounts, ct);   
+          AdminRights.ManageAccounts, ct);   
       if(resultEmployee.IsFailure)
          return Result.Failure(resultEmployee.Error);
       var employeeContractDto = resultEmployee.Value;

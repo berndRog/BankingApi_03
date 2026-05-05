@@ -8,7 +8,7 @@ using BankingApi._2_Core.Employees._2_Application.Mappings;
 using BankingApi._2_Core.Employees._3_Domain.Errors;
 using Microsoft.EntityFrameworkCore;
 [assembly: InternalsVisibleTo("BankingApiTest")]
-namespace BankingApi._3_Infrastructure._2_Persistence.ReadModel;
+namespace BankingApi._3_Infrastructure._2_Persistence.ReadModels;
 internal sealed class EmployeeReadModelEf(
    IEmployeeDbContext employeesDbContext,
    IIdentityGateway identityGateway
