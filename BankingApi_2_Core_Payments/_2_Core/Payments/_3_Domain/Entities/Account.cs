@@ -109,13 +109,14 @@ public sealed class Account : AggregateRoot {
       DeactivatedAt = deactivatedAt;
       DeactivatedByEmployeeId = deactivatedByEmployeeId;
 
+      _beneficiaries.Clear();
+      
       Touch(deactivatedAt);
       return Result.Success();
    }
    
    
    #region -------------------- Beneficiaries ------------------------------------------
-   // Story 3.1: add a beneficiary to THIS account
    public Result<Beneficiary> AddBeneficiary(
       Beneficiary beneficiary,
       DateTime updatedAt

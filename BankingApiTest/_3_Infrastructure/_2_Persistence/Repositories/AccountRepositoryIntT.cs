@@ -105,7 +105,7 @@ public sealed class AccountRepositoryIntTests : TestBaseIntegration {
          .ToList();
 
       // Act
-      var actual = await repository.SelelctByCustomerIdAsync(customer1.Id, ct);
+      var actual = await repository.SelectByCustomerIdAsync(customer1.Id, ct);
       var actualIds = actual
          .Select(a => a.Id)
          .OrderBy(id => id)

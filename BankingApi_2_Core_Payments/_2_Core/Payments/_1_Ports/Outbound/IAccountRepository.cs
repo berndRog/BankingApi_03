@@ -28,7 +28,7 @@ public interface IAccountRepository {
    );
 
    // Load all accounts for a customer
-   Task<IReadOnlyList<Account>> SelelctByCustomerIdAsync(
+   Task<IReadOnlyList<Account>> SelectByCustomerIdAsync(
       Guid customerId,
       CancellationToken ct = default
    );
@@ -52,7 +52,7 @@ public interface IAccountRepository {
    );
    
    // Load all accounts for a customer with beneficiaries
-   Task<IReadOnlyList<Account>> SelelctAccountsByCustomerIdWithBeneficiariesAsync(
+   Task<IReadOnlyList<Account>> SelectByCustomerIdWithBeneficiariesAsync(
       Guid customerId,
       CancellationToken ct = default
    );

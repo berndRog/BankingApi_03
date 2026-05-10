@@ -34,7 +34,7 @@ internal sealed class AccountRepositoryEf(
          .AnyAsync(ct);
    
    // Retrieves all accounts associated with a customer ID.
-   public async Task<IReadOnlyList<Account>> SelelctByCustomerIdAsync(
+   public async Task<IReadOnlyList<Account>> SelectByCustomerIdAsync(
       Guid customerId,
       CancellationToken ct = default
    ) => await accountDbContext.Accounts
@@ -68,7 +68,7 @@ internal sealed class AccountRepositoryEf(
       .Include(a => a.Beneficiaries.Where(b => b.Id == beneficiaryId))
       .FirstOrDefaultAsync(a => a.Id == accountId, ct);
 
-   public async Task<IReadOnlyList<Account>> SelelctAccountsByCustomerIdWithBeneficiariesAsync(
+   public async Task<IReadOnlyList<Account>> SelectByCustomerIdWithBeneficiariesAsync(
       Guid customerId, 
       CancellationToken ct = default
    )  => await accountDbContext.Accounts
