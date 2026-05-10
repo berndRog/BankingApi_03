@@ -14,14 +14,7 @@ public interface IEmployeeUseCases {
       EmployeeCreateDto employeeCreateDto,
       CancellationToken ct = default
    );
-
-   // Deactivate an employee and prevent further administrative actions
-   Task<Result> DeactivateAsync(
-      Guid employeeId,
-      DateTimeOffset deactivatedAt,
-      CancellationToken ct = default
-   );
-
+   
    // Grant or update administrative rights
    // Rights are represented as a flag enum
    Task<Result> SetAdminRightsAsync(
@@ -29,6 +22,21 @@ public interface IEmployeeUseCases {
       AdminRights adminRights,
       CancellationToken ct = default
    );
+   
+   // Update the customer's profile data
+   Task<Result<EmployeeDto>> UpdateAsync(
+      Guid employeeId,
+      EmployeeUpdateDto employeeUpdateDto,
+      CancellationToken ct = default
+   );
+
+   // Deactivate an employee and prevent further administrative actions
+   Task<Result> DeactivateAsync(
+      Guid employeeId,
+      DateTime deactivatedAt,
+      CancellationToken ct = default
+   );
+
 }
 
 /* =====================================================================

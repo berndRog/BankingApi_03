@@ -34,21 +34,21 @@ internal sealed class AccountUcDeactivate(
          return Result.Failure(resultEmployee.Error);
       var employeeContractDto = resultEmployee.Value;
       
-      // 3) Load account from database
+      // 2) Load account from database
       var account = await repository.FindByIdAsync(accountId, ct);
       if (account is null)
          return Result.Failure(AccountErrors.NotFound);
       if (customerId != account.CustomerId)
          return Result.Failure(AccountErrors.ConflictCustomerId);
 
-      // 4) Domain model
+      // 3) Domain model
       var deactivatedAt = clock.UtcNow;
       var employeeId = employeeContractDto.Id;
       var result = account.Deactivate(employeeId, deactivatedAt);
       if (result.IsFailure)
          return Result.Failure(result.Error);
       
-      // 5)  Unit of work, save changes to database
+      // 4)  Unit of work, save changes to database
       var rows = await unitOfWork.SaveAllChangesAsync("Account deactivated by employee", ct);
       logger.LogInformation("Customer deactivated customerId={customerId} rows={rows}", accountId, rows);
 

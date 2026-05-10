@@ -2,6 +2,7 @@ using BankingApi._2_Core.BuildingBlocks;
 using BankingApi._2_Core.BuildingBlocks._3_Domain.Entities;
 using BankingApi._2_Core.BuildingBlocks._3_Domain.Enums;
 using BankingApi._2_Core.BuildingBlocks._3_Domain.ValueObjects;
+using BankingApi._2_Core.Employees._2_Application.Dtos;
 using BankingApi._2_Core.Employees._3_Domain.Enum;
 using BankingApi._2_Core.Employees._3_Domain.Errors;
 namespace BankingApi._2_Core.Employees._3_Domain.Entities;
@@ -12,8 +13,8 @@ public sealed class Employee : AggregateRoot {
    //--- properties ------------------------------------------------------------
    // inherited from Entity + Aggregate root base class
    // public Guid Id { get; private set; } 
-   // public DateTimeOffset CreatedAt { get; private set; }
-   // public DateTimeOffset UpdatedAt { get; private set; }
+   // public DateTime CreatedAt { get; private set; }
+   // public DateTime UpdatedAt { get; private set; }
    public string Firstname { get; private set; } = string.Empty;
    public string Lastname  { get; private set; } = string.Empty;
    public EmailVo EmailVo { get; private set; } = default!;
@@ -23,8 +24,7 @@ public sealed class Employee : AggregateRoot {
    public EmployeeStatus Status { get; private set; } = EmployeeStatus.Pending;
    public string PersonnelNumber { get; private set; } = string.Empty;
    public AdminRights AdminRights { get; private set; } = AdminRights.ViewReports;
-
- 
+   
    private const AdminRights AllowedRights =
       AdminRights.ViewReports |
       AdminRights.ViewCustomers | AdminRights.ManageCustomers |
@@ -69,7 +69,7 @@ public sealed class Employee : AggregateRoot {
       string subject,
       string personnelNumber,
       AdminRights adminRights,
-      DateTimeOffset createdAt = default!,
+      DateTime createdAt = default!,
       string? id = null
    ) {
       // Normalize input early
@@ -132,7 +132,7 @@ public sealed class Employee : AggregateRoot {
    //--- Domain methods -----------------------------------------------------------
    // Activates the employee.
    public Result Activate(
-      DateTimeOffset activatedAt
+      DateTime activatedAt
    ) {
       if (!IsActive)
          return Result.Failure(EmployeeErrors.AlreadyDeactivated);
@@ -146,7 +146,7 @@ public sealed class Employee : AggregateRoot {
    // Replaces the administrative rights of the employee.
    public Result SetAdminRights(
       AdminRights adminRights, 
-      DateTimeOffset updatedAt
+      DateTime updatedAt
    ) {
       if ((adminRights & ~AllowedRights) != 0)
          return Result.Failure(EmployeeErrors.InvalidAdminRightsBitmask);
@@ -158,16 +158,16 @@ public sealed class Employee : AggregateRoot {
    }
 
    // update employee profile data
-   public Result UpdateProfile(
+   public Result<Employee> Update(
       string? lastname,
       EmailVo? emailVo,
       PhoneVo? phoneVo,
-      DateTimeOffset updatedAt
+      DateTime updatedAt
    ) {
       lastname  = lastname?.Trim();
       
       if (!string.IsNullOrWhiteSpace(lastname) && lastname.Length is < 2 or > 80)
-         return Result.Failure(EmployeeErrors.InvalidLastname);
+         return Result<Employee>.Failure(EmployeeErrors.InvalidLastname);
       
       // Apply changes
       if (lastname is not null) Lastname = lastname;
@@ -175,12 +175,12 @@ public sealed class Employee : AggregateRoot {
       if (phoneVo is not null) PhoneVo = phoneVo;
       
       Touch(updatedAt);
-      return Result.Success();
+      return Result<Employee>.Success(this);
    }
    
    // Deactivates the employee.
    public Result Deactivate(
-      DateTimeOffset deactivatedAt
+      DateTime deactivatedAt
    ) {
       if (!IsActive)
          return Result.Failure(EmployeeErrors.AlreadyDeactivated);

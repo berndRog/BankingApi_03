@@ -62,7 +62,3 @@ Accept: application/json
 # @name Get accounts ByCustomer6
 GET {{baseUrl}}/customers/60000000-0000-0000-0000-000000000000/accounts
 Accept: application/json
-
-###
-# @name Get transactions ByAccount1
-# GET {{baseUrl}}/accounts/01000000-0000-0000-0000-000000000000/filter?start=2023-01-01&end=2023-12-31

@@ -7,13 +7,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace BankingApi._3_Infrastructure._2_Persistence.Configurations;
 
-public sealed class ConfigEmployee(
-   DateTimeOffsetToIsoStringConverter dtConv,
-   DateTimeOffsetToIsoStringConverterNullable dtConvNul
-) : IEntityTypeConfiguration<Employee> {
+public sealed class ConfigEmployee : IEntityTypeConfiguration<Employee> {
 
    public void Configure(EntityTypeBuilder<Employee> builder) {
 
+      // tablename
       builder.ToTable("Employees");
       
       // Primary Key
@@ -36,17 +34,16 @@ public sealed class ConfigEmployee(
       // Phone
       builder.Property(e => e.PhoneVo)
          .HasConversion(vo => vo.Value, s => PhoneVo.FromPersisted(s))
-         .IsRequired()
-         .HasColumnName("Phone").HasColumnOrder(3) 
-         .HasMaxLength(64);
-      
+         .HasMaxLength(64)
+         .HasColumnName("Phone").HasColumnOrder(3)
+         .IsRequired();
+
       builder.Property(e => e.EmailVo)
          .HasConversion(vo => vo.Value, s => EmailVo.FromPersisted(s))
-         .IsRequired()
-         .HasColumnName("Email").HasColumnOrder(4) 
-         .HasMaxLength(254);
-      builder.HasIndex(c => c.EmailVo).IsUnique();
-      
+         .HasMaxLength(254)
+         .HasColumnName("Email").HasColumnOrder(4)
+         .IsRequired();
+
       // Scalar properties (Employee-specific)
       builder.Property(x => x.PersonnelNumber)
          .HasMaxLength(32)
@@ -73,17 +70,18 @@ public sealed class ConfigEmployee(
          .HasMaxLength(200)
          .HasColumnName("Subject").HasColumnOrder(8)
          .IsRequired();
-      builder.HasIndex(x => x.Subject).IsUnique();
-      
-      
+
       builder.Property(x => x.CreatedAt)
-         .HasConversion(dtConv)
          .HasColumnName("CreateAt").HasColumnOrder(9)
          .IsRequired();
       
       builder.Property(o => o.UpdatedAt)
-         .HasConversion(dtConvNul)
          .HasColumnName("UpdateAt").HasColumnOrder(10)
          .IsRequired();
+      
+      builder.HasIndex(c => c.PhoneVo);
+      builder.HasIndex(c => c.EmailVo).IsUnique();
+      builder.HasIndex(x => x.Subject).IsUnique();
+      
    }
 }

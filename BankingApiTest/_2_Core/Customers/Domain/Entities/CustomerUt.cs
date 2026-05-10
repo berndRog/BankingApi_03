@@ -19,7 +19,7 @@ public sealed class CustomerUt {
       _customer = _seed.Customer1();
       _customer5 = _seed.Customer5();
       _addressVo = _seed.Address1Vo;
-      _employee2Id = Guid.Parse(_seed.Employee2Id);
+      _employee2Id = _seed.Employee2().Id;
       
    }
 
@@ -57,7 +57,7 @@ public sealed class CustomerUt {
       Equal(_customer.Subject, actual.Subject);
       Equal(_customer.Status, actual.Status);
       Equal(_customer.AddressVo, actual.AddressVo);
-      True(actual.IsActive);
+      False(actual.IsActive);
       True(actual.IsProfileComplete);
    }
 
@@ -89,7 +89,7 @@ public sealed class CustomerUt {
       Equal(_addressVo, actual.AddressVo);
       Equal(_customer.DisplayName, actual.DisplayName);
       Equal(_customer.Status, actual.Status);
-      True(actual.IsActive);
+      False(actual.IsActive);
       True(actual.IsProfileComplete);
    }
 
@@ -223,7 +223,7 @@ public sealed class CustomerUt {
       Equal(_customer5.Subject, actual.Subject);
       Equal(_customer5.Status, actual.Status);
       Equal(_customer5.AddressVo, actual.AddressVo);
-      True(actual.IsActive);
+      False(actual.IsActive);
       True(actual.IsProfileComplete);
    }
 

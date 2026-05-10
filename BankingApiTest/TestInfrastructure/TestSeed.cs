@@ -1,27 +1,33 @@
 using BankingApi._2_Core.BuildingBlocks._1_Ports.Outbound;
 using BankingApi._2_Core.BuildingBlocks._3_Domain.ValueObjects;
 using BankingApi._2_Core.Customers._3_Domain.Entities;
+using BankingApi._2_Core.Employees._3_Domain.Entities;
 using BankingApi._2_Core.Payments._3_Domain.Entities;
 using BankingApi._3_Infrastructure._2_Persistence;
 namespace BankingApiTest.TestInfrastructure;
 
 public sealed class TestSeed {
    
-   private DateTimeOffset _utcNow;
+   private DateTime _utcNow;
    private IClock _clock;
    private Seed _seed;
    
    public IClock Clock => _clock;
 
    public TestSeed() {
-      _utcNow = DateTimeOffset.Parse("2025-01-01T00:00:00Z");
+      _utcNow = DateTime.Parse("2025-01-01T00:00:00Z").ToUniversalTime();
       _clock = new FakeClock(_utcNow);
       _seed = new Seed(_clock);
    }
    
-   
-   
-   public string Employee2Id => _seed.Employee2Id;
+   #region -------------- Test Employees (Entities) ------------------------------------------
+   public Employee Employee1() => _seed.Employee1();
+   public Employee Employee2() => _seed.Employee2();
+   public Employee EmployeeRegister() => _seed.EmployeeRegister();
+   public IReadOnlyList<Employee> Employees => [
+      Employee1(), Employee2()
+   ];
+   #endregion
    
    #region -------------- Test Addresses (Value Objects) -------------------------------------
    public AddressVo Address1Vo => _seed.Address1Vo;

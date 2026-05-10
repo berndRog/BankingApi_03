@@ -1,6 +1,8 @@
 using BankingApi._2_Core.BuildingBlocks._1_Ports.Outbound;
+using BankingApi._2_Core.BuildingBlocks._3_Domain.Enums;
 using BankingApi._2_Core.BuildingBlocks._3_Domain.ValueObjects;
 using BankingApi._2_Core.Customers._3_Domain.Entities;
+using BankingApi._2_Core.Employees._3_Domain.Entities;
 using BankingApi._2_Core.Payments._3_Domain.Entities;
 using BankingApi._2_Core.Payments._3_Domain.Enums;
 using BankingApi._2_Core.Payments._3_Domain.ValueObjects;
@@ -12,7 +14,9 @@ public sealed class Seed(
    #region --------------- Test Employees (Entities) -----------------------------------------
    public string Employee1Id = "00000000-0001-0000-0000-000000000000";
    public string Employee2Id = "00000000-0002-0000-0000-000000000000";
-   /*
+   public string EmployeeRegisterId = "00000000-0010-0000-0000-000000000000";
+
+
    public Employee Employee1() => CreateEmployee(
       id: "00000000-0001-0000-0000-000000000000",
       firstname: "Veronika",
@@ -35,11 +39,21 @@ public sealed class Seed(
       personnelNumber: "Emp002",
       adminRights: (AdminRights) 511
    );
+   
+   public Employee EmployeeRegister() => CreateEmployee(
+      id: EmployeeRegisterId,
+      firstname: "Yvonne",
+      lastname: "Yahn",
+      email: "y.yahn@banking.de",
+      phone: "+49 5826 123 4020",
+      subject: "11111111-0010-0000-0000-000000000000",
+      personnelNumber: "Emp010",
+      adminRights: (AdminRights) 511
+   );
 
    public IReadOnlyList<Employee> Employees => new List<Employee> {
       Employee1(), Employee2()
    };
-   */
    #endregion
 
    #region -------------- Test Addresses (Value Objects) -------------------------------------
@@ -405,13 +419,47 @@ public sealed class Seed(
    private void AddBeneficaryToAccount(
       Account account,
       Beneficiary beneficiary,
-      DateTimeOffset createdAt
+      DateTime createdAt
    ) {
       account.AddBeneficiary(beneficiary, createdAt);
       _beneficiaries.Add(beneficiary);
    }
    
    // ---------- Helper ----------
+   private Employee CreateEmployee(
+      string id,
+      string firstname,
+      string lastname,
+      string email,
+      string phone,
+      string subject,
+      string personnelNumber,
+      AdminRights adminRights
+   ) {
+      var resultEmail = EmailVo.Create(email);
+      if (resultEmail.IsFailure)
+         throw new Exception($"Invalid email in test seed: {email}");
+      var emailVo = resultEmail.Value;
+
+      var resultPhone = PhoneVo.Create(phone);
+      if (resultPhone.IsFailure)
+         throw new Exception($"Invalid phone number in test seed: {phone}");
+      var phoneVo = resultPhone.Value;
+
+      var result = Employee.Create(
+         firstname: firstname,
+         lastname: lastname,
+         emailVo: emailVo,
+         phoneVo: phoneVo,
+         subject: subject,
+         personnelNumber: personnelNumber,
+         adminRights: adminRights,
+         createdAt: clock.UtcNow,
+         id: id
+      );
+      return result.Value;
+   } 
+   
    private Customer CreateCustomer(
       string id,
       string firstname,
@@ -500,7 +548,7 @@ public sealed class Seed(
    ) {
       
       var bookedAt = bookedAtString is not null
-         ? DateTimeOffset.Parse(bookedAtString, null, DateTimeStyles.AdjustToUniversal)
+         ? DateTime.Parse(bookedAtString, null, DateTimeStyles.AdjustToUniversal)
          : clock.UtcNow;
       
       var creditAccountIbanVo = IbanVo.Create(creditAccountIban).GetValueOrThrow();

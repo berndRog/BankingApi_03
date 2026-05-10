@@ -21,15 +21,15 @@ public sealed class AppDbContext(
       base.OnModelCreating(modelBuilder);
 
       // Reuse converter instances (stateless, deterministic).
-      var dtConv = new DateTimeOffsetToIsoStringConverter();
-      var dtConvNul = new DateTimeOffsetToIsoStringConverterNullable();
+      var dtConv = new DateTimeToIsoStringConverter();
+      var dtConvNul = new DateTimeToIsoStringConverterNullable();
       
       // Apply entity mappings (aggregate roots first).
-      modelBuilder.ApplyConfiguration(new ConfigCustomer(dtConv, dtConvNul));
+      modelBuilder.ApplyConfiguration(new ConfigCustomer());
       
-      modelBuilder.ApplyConfiguration(new ConfigAccount(dtConv));
+      modelBuilder.ApplyConfiguration(new ConfigAccount());
       modelBuilder.ApplyConfiguration(new ConfigBeneficiary());
-      modelBuilder.ApplyConfiguration(new ConfigEmployee(dtConv, dtConvNul));
+      modelBuilder.ApplyConfiguration(new ConfigEmployee());
    }
 
 }

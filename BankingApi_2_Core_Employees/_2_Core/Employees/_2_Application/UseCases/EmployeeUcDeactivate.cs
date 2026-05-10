@@ -26,7 +26,7 @@ public sealed class EmployeeUcDeactivate(
 
    public async Task<Result> ExecuteAsync(
       Guid employeeId,
-      DateTimeOffset deactivatedAt = default,
+      DateTime deactivatedAt = default,
       CancellationToken ct = default
    ) {
        // 1) Check guards

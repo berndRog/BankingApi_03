@@ -10,8 +10,9 @@ public static class DiAddEmployeeModules {
    ) {
       // Inbound ports Use Cases
       services.AddScoped<EmployeeUcCreate>();
-      services.AddScoped<EmployeeUcDeactivate>();
       services.AddScoped<EmployeeUcSetAdminRights>();
+      services.AddScoped<EmployeeUcUpdate>();
+      services.AddScoped<EmployeeUcDeactivate>();
       services.AddScoped<IEmployeeUseCases, EmployeeUseCases>();
       // Policies
       return services;

@@ -5,10 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace BankingApi._3_Infrastructure._2_Persistence.Configurations;
 
-public sealed class ConfigCustomer(
-   DateTimeOffsetToIsoStringConverter dtConv,
-   DateTimeOffsetToIsoStringConverterNullable dtConvNul
-) : IEntityTypeConfiguration<Customer> {
+public sealed class ConfigCustomer : IEntityTypeConfiguration<Customer> {
 
    public void Configure(EntityTypeBuilder<Customer> builder) {
       
@@ -88,12 +85,10 @@ public sealed class ConfigCustomer(
          .IsRequired(false);
       
       builder.Property(c => c.ActivatedAt)
-         .HasConversion(dtConvNul)
          .HasColumnName("ActivatedAt").HasColumnOrder(12)
          .IsRequired(false);
 
       builder.Property(c => c.RejectedAt)
-         .HasConversion(dtConvNul)
          .HasColumnName("RejectedAt").HasColumnOrder(13)
          .IsRequired(false);
 
@@ -107,18 +102,16 @@ public sealed class ConfigCustomer(
          .IsRequired(false);
       
       builder.Property(c => c.DeactivatedAt)
-         .HasConversion(dtConvNul)
+         //.HasConversion(dtConvNul)
          .HasColumnName("DeactivatedAt").HasColumnOrder(16)
          .IsRequired(false);
       
       // Auditing timestamps
       builder.Property(c => c.CreatedAt)
-         .HasConversion(dtConv)
          .HasColumnName("CreatedAt").HasColumnOrder(17)
          .IsRequired();
 
       builder.Property(c => c.UpdatedAt)
-         .HasConversion(dtConv)
          .HasColumnName("UpdatedAt").HasColumnOrder(18)
          .IsRequired();
       

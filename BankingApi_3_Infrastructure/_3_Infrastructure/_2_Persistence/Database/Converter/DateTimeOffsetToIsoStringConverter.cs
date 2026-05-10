@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BankingApi._3_Infrastructure._2_Persistence.Database.Converter;
 
 
-public sealed class DateTimeOffsetToIsoStringConverter() 
-   : ValueConverter<DateTimeOffset, string>(
+public sealed class DateTimeToIsoStringConverter() 
+   : ValueConverter<DateTime, string>(
       dto => dto.ToUniversalTime()
          .ToString("yyyy-MM-dd'T'HH:mm:ss.fff'Z'", CultureInfo.InvariantCulture),
-      iso => DateTimeOffset.Parse(
+      iso => DateTime.Parse(
          iso,
          CultureInfo.InvariantCulture,
          DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal
@@ -19,11 +19,11 @@ public sealed class DateTimeOffsetToIsoStringConverter()
 
 /*
 // epoch ist leider schlecht lesbar
-public sealed class DateTimeOffsetToUnixTimeConverter() 
-   : ValueConverter<DateTimeOffset, long>(
+public sealed class DateTimeToUnixTimeConverter() 
+   : ValueConverter<DateTime, long>(
       // ➜ C# → DB (write)
       dto => dto.ToUnixTimeMilliseconds(),
       // ➜ DB → C# (read)  ← THIS is the inverse direction
-      millis => DateTimeOffset.FromUnixTimeMilliseconds(millis)
+      millis => DateTime.FromUnixTimeMilliseconds(millis)
 ) { }
 */

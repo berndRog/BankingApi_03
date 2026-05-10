@@ -10,18 +10,8 @@ using BankingApi._2_Core.Employees._3_Domain.Errors;
 using Microsoft.Extensions.Logging;
 namespace BankingApi._2_Core.Employees._2_Application.UseCases;
 
-/// <summary>
-/// Use case: Create a new employee (EM-1).
-///
-/// Flow:
-/// 1) Validate basic inputs (use-case guards)
-/// 2) Check uniqueness constraints (personnel number / email)
-/// 3) Create domain aggregate (Employee.Create)
-/// 4) Add to repository + commit via UnitOfWork
-///
-/// Logging:
-/// - Does not handle technical exceptions (middleware responsibility)
-/// </summary>
+
+// Use case: Create a new employee (EM-1).
 public sealed class EmployeeUcCreate(
    IIdentityGateway identityGateway,
    IEmployeeRepository repository,

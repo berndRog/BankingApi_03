@@ -4,47 +4,40 @@ using BankingApi._2_Core.Employees._1_Ports.Inbound;
 using BankingApi._2_Core.Employees._2_Application.Dtos;
 namespace BankingApi._2_Core.Employees._2_Application.UseCases;
 
-/// <summary>
-/// Facade for employee-related application use cases.
-///
-/// Purpose:
-/// - Provides a single entry point for all employee write operations
-/// - Delegates execution to specialized use case implementations
-/// - Simplifies dependency injection for API controllers
-///
-/// Architectural intent:
-/// - Part of the Application Layer
-/// - Acts as a thin facade / coordinator
-/// - Does NOT contain business logic
-///
-/// Design notes:
-/// - This class intentionally does not use async/await
-/// - All calls are simple pass-through delegations
-/// - Validation, domain rules and persistence are handled
-///   by the underlying use case implementations
-/// </summary>
+// Facade for employee-related application use cases.
+// - Provides a single entry point for all employee write operations
+// - Delegates execution to specialized use case implementations
+// - Simplifies dependency injection for API controllers
 public sealed class EmployeeUseCases(
    EmployeeUcCreate createUc,
-   EmployeeUcDeactivate deactivateUc,
-   EmployeeUcSetAdminRights setRightsUc
+   EmployeeUcSetAdminRights setRightsUc,
+   EmployeeUcUpdate updateUc,
+   EmployeeUcDeactivate deactivateUc
 ) : IEmployeeUseCases {
    
    public Task<Result<EmployeeDto>> CreateAsync(
       EmployeeCreateDto dto,
       CancellationToken ct = default
    ) => createUc.ExecuteAsync(employeeCreateDto: dto, ct: ct);
-   
-   public Task<Result> DeactivateAsync(
-      Guid employeeId,
-      DateTimeOffset deactivatedAt,
-      CancellationToken ct = default
-   ) => deactivateUc.ExecuteAsync(employeeId, deactivatedAt, ct);
 
    public Task<Result> SetAdminRightsAsync(
       Guid employeeId, 
       AdminRights adminRights, 
       CancellationToken ct = default
    ) => setRightsUc.ExecuteAsync(employeeId, adminRights, ct);
+
+   public Task<Result<EmployeeDto>> UpdateAsync(
+      Guid employeeId, 
+      EmployeeUpdateDto employeeUpdateDto, 
+      CancellationToken ct = default
+   ) => updateUc.ExecuteAsync(employeeId, employeeUpdateDto, ct);
+
+   public Task<Result> DeactivateAsync(
+      Guid employeeId,
+      DateTime deactivatedAt,
+      CancellationToken ct = default
+   ) => deactivateUc.ExecuteAsync(employeeId, deactivatedAt, ct);
+
 }
 
 /* =====================================================================

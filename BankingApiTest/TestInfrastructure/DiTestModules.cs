@@ -4,6 +4,9 @@ using BankingApi._2_Core.BuildingBlocks._4_BcContracts._1_Ports;
 using BankingApi._2_Core.Customers._1_Ports.Inbound;
 using BankingApi._2_Core.Customers._1_Ports.Outbound;
 using BankingApi._2_Core.Customers._2_Application.UseCases;
+using BankingApi._2_Core.Employees._1_Ports.Inbound;
+using BankingApi._2_Core.Employees._1_Ports.Outbound;
+using BankingApi._2_Core.Employees._2_Application.UseCases;
 using BankingApi._2_Core.Payments._1_Ports.Inbound;
 using BankingApi._2_Core.Payments._1_Ports.Outbound;
 using BankingApi._2_Core.Payments._2_Application.UseCases;
@@ -37,6 +40,7 @@ public static class DiTestModules {
       // BC Db Contexts
       services.AddScoped<ICustomerDbContext, CustomerDbContextEf>();
       services.AddScoped<IAccountDbContext, AccountDbContextEf>();
+      services.AddScoped<IEmployeeDbContext, EmployeeDbContextEf>();
       
       // Contracts
       services.AddScoped<ICustomerContract, CustomerContractEf>();
@@ -46,10 +50,12 @@ public static class DiTestModules {
       // Readmodels
       services.AddScoped<ICustomerReadModel, CustomerReadModelEf>();
       services.AddScoped<IAccountReadModel, AccountReadModelEf>();
+      services.AddScoped<IEmployeeReadModel, EmployeeReadModelEf>();
       
       // Repositories
       services.AddScoped<ICustomerRepository, CustomerRepositoryEf>();
       services.AddScoped<IAccountRepository, AccountRepositoryEf>();
+      services.AddScoped<IEmployeeRepository, EmployeeRepositoryEf>();
      
       // Customer UseCases
       services.AddScoped<ICustomerUseCases, CustomerUseCases>();
@@ -63,6 +69,13 @@ public static class DiTestModules {
       services.AddScoped<AccountUcDeactivate>();
       services.AddScoped<AccountUcBeneficiaryAdd>();
       services.AddScoped<AccountUcBeneficiaryRemove>();
+      
+      // Employe UseCases
+      services.AddScoped<IEmployeeUseCases, EmployeeUseCases>();
+      services.AddScoped<EmployeeUcCreate>();
+      services.AddScoped<EmployeeUcSetAdminRights>();
+      services.AddScoped<EmployeeUcUpdate>();
+      services.AddScoped<EmployeeUcDeactivate>();
       
       // Unit of Work
       services.AddScoped<IUnitOfWork, UnitOfWork>();

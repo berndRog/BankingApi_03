@@ -17,7 +17,7 @@ public sealed class AccountUt {
       _clock = _seed.Clock;
       _customer = _seed.Customer1();
       _account = _seed.Account1();
-      _employee2Id = Guid.Parse(_seed.Employee2Id);
+      _employee2Id = _seed.Employee2().Id;
    }
 
    [Fact]
