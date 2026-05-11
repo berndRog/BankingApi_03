@@ -140,7 +140,8 @@ public sealed class AccountRepositoryIntTests : TestBaseIntegration {
       
       // Act  (load account with account1.Id and the beneficiary with beneficiary1.Id
       var actual = await repository
-         .FindAccountByWithBeneficiaryByIdAsync(account1.Id, beneficiary1.Id, ct);
+         .FindByIdWithBeneficiariesAsync(account1.Id, ct);
+      var actualBeneficiary = actual.Beneficiaries.FirstOrDefault(b => b.Id == beneficiary1.Id); 
       
       // Assert
       NotNull(actual);
@@ -148,8 +149,7 @@ public sealed class AccountRepositoryIntTests : TestBaseIntegration {
       Equal(account1.IbanVo, actual.IbanVo);
       Equal(account1.BalanceVo, actual.BalanceVo);
       Equal(account1.CustomerId, actual.CustomerId);
-      Single(actual.Beneficiaries);
-      var actualBeneficiary = actual.Beneficiaries.ToList()[0];
+
       Equal(expectedBeneficiary?.Id, actualBeneficiary?.Id);
       Equal(expectedBeneficiary?.Name, actualBeneficiary?.Name);
       Equal(expectedBeneficiary?.IbanVo, actualBeneficiary?.IbanVo);   

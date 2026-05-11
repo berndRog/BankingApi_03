@@ -109,12 +109,12 @@ public sealed class Account : AggregateRoot {
       DeactivatedAt = deactivatedAt;
       DeactivatedByEmployeeId = deactivatedByEmployeeId;
 
+      // delete all beneficiries when deactivting this account
       _beneficiaries.Clear();
       
       Touch(deactivatedAt);
       return Result.Success();
    }
-   
    
    #region -------------------- Beneficiaries ------------------------------------------
    public Result<Beneficiary> AddBeneficiary(

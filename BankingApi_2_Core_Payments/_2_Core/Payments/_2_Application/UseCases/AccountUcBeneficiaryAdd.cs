@@ -25,7 +25,7 @@ internal sealed class AccountUcBeneficiaryAdd(
       CancellationToken ct = default
    ) {
       // 1) Load account with beneficiaries
-      var account = await accountRepository.FindAccountByIdWithBeneficiariesAsync(accountId, ct);
+      var account = await accountRepository.FindByIdWithBeneficiariesAsync(accountId, ct);
       if (account is null) 
          return Result<BeneficiaryDto>.Failure(BeneficiaryErrors.AccountNotFound);
       

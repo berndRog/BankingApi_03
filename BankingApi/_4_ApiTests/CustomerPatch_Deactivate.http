@@ -1,0 +1,19 @@
+@baseUrl = https://localhost:8010/banking/v2
+
+###
+PATCH {{baseUrl}}/customers/10000000-0000-0000-0000-000000000000/deactivate
+
+###
+PATCH {{baseUrl}}/customers/20000000-0000-0000-0000-000000000000/deactivate
+
+###
+PATCH {{baseUrl}}/customers/30000000-0000-0000-0000-000000000000/deactivate
+
+###
+PATCH {{baseUrl}}/customers/40000000-0000-0000-0000-000000000000/deactivate
+
+###
+PATCH {{baseUrl}}/customers/50000000-0000-0000-0000-000000000000/deactivate
+
+###
+PATCH {{baseUrl}}/customers/60000000-0000-0000-0000-000000000000/deactivate

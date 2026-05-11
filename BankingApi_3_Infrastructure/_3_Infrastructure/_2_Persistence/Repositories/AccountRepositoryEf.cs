@@ -52,7 +52,7 @@ internal sealed class AccountRepositoryEf(
 
    #region --- Child entity: Benficiary -----------------------------------------------------
    // Loads the Account Aggregate Root and all its Beneficiary child entities.
-   public async Task<Account?> FindAccountByIdWithBeneficiariesAsync(
+   public async Task<Account?> FindByIdWithBeneficiariesAsync(
       Guid accountId,
       CancellationToken ct = default
    ) => await accountDbContext.Accounts

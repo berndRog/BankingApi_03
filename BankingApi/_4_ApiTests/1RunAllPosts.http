@@ -5,16 +5,16 @@ import BeneficiaryPost.http
 import TransferSendMoney.http
 
 ###
-run EmployeePost.http
+run EmployeePost_Create.http
 
 ###
-run CustomerPost.http
+run CustomerPost_Create.http
 
 ###
-run AccountPost.http
+run AccountPost_Create.http
 
 ###
-run BeneficiaryPost.http
+run BeneficiaryPost_Create.http
 
 ###
 ### run TransferSendMoney.http
